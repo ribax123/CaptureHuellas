@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package Formulario;
 
 import com.digitalpersona.onetouch.DPFPDataPurpose;
@@ -27,7 +23,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import Funtions.conexionBD;
+import Funtions.ConexionBD;
 import com.digitalpersona.onetouch.verification.DPFPVerificationResult;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -38,35 +34,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import Funtions.Metho;
+import com.sun.source.tree.BreakTree;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Calendar;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
 
 /**
  *
  * @author Fabian Andres
  */
 public class CapturahuellaDigital extends javax.swing.JFrame {
-    
-   
-    public String fecha = new Metho().fechaActual();
 
-    public CapturahuellaDigital() {
+    Metho metho = new Metho();
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Imposible modificar el tema visual",
-                    "Lookandfeel inválido.",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        initComponents();
-        
-        lblFecha.setText(fecha);
-        
-    }
+    public String fecha = metho.fechaActual();
     
-     
-     
-     
-     
+    public String hora = metho.MostrarHora();
+
     private DPFPCapture Lector = DPFPGlobal.getCaptureFactory().createCapture();
     private DPFPEnrollment Reclutador = DPFPGlobal.getEnrollmentFactory().createEnrollment();
     private DPFPTemplate template;
@@ -74,75 +60,125 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
     public static String TEMPLATE_PROPERTY = "template";
 
-    conexionBD con = new conexionBD();
+    ConexionBD con = new ConexionBD();
 
-    protected void Iniciar() {
+    protected void Iniciar(JTextArea tex, JLabel img, JLabel label) {
         Lector.addDataListener(new DPFPDataAdapter() {
+
             @Override
             public void dataAcquired(final DPFPDataEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
+
+                                                   
+                            
+                        
                         try {
-                            EnviarTexto("La Huella Digital ha sido Capturada");
-                            ProcesarCaptura(e.getSample());
-                            identificarHuella();
-                        } catch (IOException ex) {
+                            EnviarTexto("La Huella Digital ha sido Capturada", tex);
+                            ProcesarCaptura(e.getSample(), tex, img);
+                            identificarHuella(label);
+                            
+                          
+
+                            
+
+                            } catch (IOException ex) {
                             java.util.logging.Logger.getLogger(CapturahuellaDigital.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
                         }
+                        }
                     }
-                });
-            }
-        });
-
-        Lector.addReaderStatusListener(new DPFPReaderStatusAdapter() {
-            @Override
-            public void readerConnected(final DPFPReaderStatusEvent e) {
-                SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        EnviarTexto("El Sensor de Huella Digital esta Activado o Conectado");
-                    }
-                });
+                );
+                
             }
 
+            });
+
+            Lector.addReaderStatusListener ( 
+                new DPFPReaderStatusAdapter() {
             @Override
-            public void readerDisconnected(final DPFPReaderStatusEvent e) {
+                public void readerConnected
+                (final DPFPReaderStatusEvent e
+                
+                    ) {
                 SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        EnviarTexto("El Sensor de Huella Digital esta Desactivado o no Conecatado");
-                    }
-                });
-            }
-        });
-        Lector.addSensorListener(new DPFPSensorAdapter() {
-            @Override
-            public void fingerTouched(final DPFPSensorEvent e) {
+                        public void run() {
+                            EnviarTexto("El Sensor de Huella Digital esta Activado o Conectado", tex);
+                        }
+                    });
+                }
+
+                @Override
+                public void readerDisconnected
+                (final DPFPReaderStatusEvent e
+                
+                    ) {
                 SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        EnviarTexto("El dedo ha sido colocado sobre el Lector de Huella");
-                    }
-                });
+                        public void run() {
+                            EnviarTexto("El Sensor de Huella Digital esta Desactivado o no Conecatado", tex);
+                        }
+                    });
+                }
             }
 
+            );
+            Lector.addSensorListener ( 
+                new DPFPSensorAdapter() {
             @Override
-            public void fingerGone(final DPFPSensorEvent e) {
+                public void fingerTouched
+                (final DPFPSensorEvent e
+                
+                    ) {
                 SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        EnviarTexto("El dedo ha sido quitado del Lector de Huella");
-                    }
-                });
+                        public void run() {
+                            EnviarTexto("El dedo ha sido colocado sobre el Lector de Huella", tex);
+
+                        }
+                    });
+                }
+
+                @Override
+                public void fingerGone
+                (final DPFPSensorEvent e
+                
+                    ) {
+                SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            EnviarTexto("El dedo ha sido quitado del Lector de Huella", tex);
+                        }
+                    });
+                }
             }
-        });
-        Lector.addErrorListener(new DPFPErrorAdapter() {
+
+            );
+            Lector.addErrorListener ( new DPFPErrorAdapter() {
+            
+
             public void errorReader(final DPFPErrorEvent e) {
                 SwingUtilities.invokeLater(new Runnable() {
                     public void run() {
-                        EnviarTexto("Error: " + e.getError());
+                        EnviarTexto("Error: " + e.getError(), tex);
                     }
                 });
             }
         });
     }
+    
+   
 
+   /* public void dataIm(JLabel fec, JLabel day, JLabel hour) {
+        // borrar(fec, day, hour);
+        fec.setText(fecha);
+        day.setText(dia);
+        hour.setText(hora);
+        
+        System.out.println(hora);
+    } 
+
+     public void borrar(JLabel fec, JLabel day, JLabel hour){
+        fec.setText("");
+        day.setText("");
+        hour.setText("");
+    }*/
     public DPFPFeatureSet featuresinscripcion;
     public DPFPFeatureSet featuresverificacion;
 
@@ -160,39 +196,40 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         return DPFPGlobal.getSampleConversionFactory().createImage(sample);
     }
 
-    public void DibujarHuella(Image image) {
-        lblImagenHuella.setIcon(new ImageIcon(
-                image.getScaledInstance(panellImagenHuella.getWidth(), panellImagenHuella.getHeight(),
+    public void DibujarHuella(Image image, JLabel img) {
+        img.setIcon(new ImageIcon(
+                image.getScaledInstance(img.getWidth(), img.getHeight(),
                         Image.SCALE_DEFAULT)));
         repaint();
     }
 
-    public void EstadoHuellas() {
+    public void EstadoHuellas(JTextArea tex) {
         EnviarTexto("Muestra de Huellas Necesarias para Guardar Template "
-                + Reclutador.getFeaturesNeeded());
+                + Reclutador.getFeaturesNeeded(), tex);
     }
 
     ;
     
    
 
-    public void EnviarTexto(String string) {
-        txtArea.append(string + "\n");
+    public void EnviarTexto(String string, JTextArea tex) {
+        tex.append(string + "\n");
     }
 
     ;
 
-    public void start() {
+    public void start(JTextArea tex) {
         Lector.startCapture();
-        EnviarTexto("Utilizando el Lector de Huella Dactilar ");
-        
+
+        EnviarTexto("Utilizando el Lector de Huella Dactilar ", tex);
+
     }
 
     ;
 
-    public void stop() {
+    public void stop(JTextArea tex) {
         Lector.stopCapture();
-        EnviarTexto("No se está usando el Lector de Huella Dactilar ");
+        EnviarTexto("No se está usando el Lector de Huella Dactilar ", tex);
     }
 
     public DPFPTemplate getTemplate() {
@@ -206,7 +243,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
     }
 
-    public void ProcesarCaptura(DPFPSample sample) {
+    public void ProcesarCaptura(DPFPSample sample, JTextArea tex, JLabel img) {
 
         featuresinscripcion = extraerCaracteristicas(sample, DPFPDataPurpose.DATA_PURPOSE_ENROLLMENT);
         featuresverificacion = extraerCaracteristicas(sample, DPFPDataPurpose.DATA_PURPOSE_VERIFICATION);
@@ -214,44 +251,19 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         if (featuresinscripcion != null) {
             try {
                 System.out.println("Las caracteristicas de la huella han sido creadas");
-                Reclutador.addFeatures(featuresinscripcion);
+                //Reclutador.addFeatures(featuresinscripcion);
 
                 Image image = CrearImagenHuella(sample);
-                DibujarHuella(image);
+                DibujarHuella(image, img);
 
-            } catch (DPFPImageQualityException e) {
+            } catch (Exception e) {
                 System.out.println("Error: " + e.getMessage());
 
-            } finally {
-                EstadoHuellas();
-                switch (Reclutador.getTemplateStatus()) {
-                    case TEMPLATE_STATUS_READY:
-                        stop();
-                        setTemplate(Reclutador.getTemplate());
-                        EnviarTexto("La plantilla de la huella ha sido creada");
-                       // btnIdentificar.setEnabled(true);
-                        btnVerificar.setEnabled(true);
-                        btnGuardar.setEnabled(true);
-                        btnGuardar.grabFocus();
-                        break;
-
-                    case TEMPLATE_STATUS_FAILED:
-                        Reclutador.clear();
-                        stop();
-                        EstadoHuellas();
-                        setTemplate(null);
-                        JOptionPane.showMessageDialog(CapturahuellaDigital.this, "La plantilla de la huella no pudo ser creada");
-                        start();
-                        break;
-
-                }
-
             }
+
         }
 
     }
-    
-   
 
     public void guardarHuella() {
         //Obtiene los datos del template de la huella actual
@@ -327,7 +339,8 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         }
     }
 
-    public void identificarHuella() throws IOException {
+    public void identificarHuella(JLabel label) throws IOException {
+
         try {
             //Establece los valores para la sentencia SQL
             Connection c = con.conectar();
@@ -339,7 +352,6 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
             //Si se encuentra el nombre en la base de datos
             while (rs.next()) {
 
-               
                 //Lee la plantilla de la base de datos
                 String nombre = rs.getString(": huenombre");
                 byte templateBuffer[] = rs.getBytes(": huehuella");
@@ -348,7 +360,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
                 //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
                 setTemplate(referenceTemplate);
-                
+
                 // Compara las caracteriticas de la huella recientemente capturda con la
                 // alguna plantilla guardada en la base de datos que coincide con ese tipo
                 DPFPVerificationResult result = Verificador.verify(featuresverificacion,
@@ -358,14 +370,15 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
                 //e indica el nombre de la persona que coincidió.
                 if (result.isVerified()) {
                     //crea la imagen de los datos guardado de las huellas guardadas en la base de               
-                    JOptionPane.showMessageDialog(null, "Las huella capturada es de " + nombre, "Verificacion de Huella ", JOptionPane.INFORMATION_MESSAGE);
-                    
+                    //JOptionPane.showMessageDialog(null, "Las huella capturada es de " + nombre, "Verificacion de Huella ", JOptionPane.INFORMATION_MESSAGE);
+                    label.setText(nombre);
+
                     return;
-                    
+
                 }
             }
             //Si no encuentra alguna huella correspondiente al nombre lo indica con un
-            JOptionPane.showMessageDialog(null, "No existe ningún registro que coincidacon la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
             setTemplate(null);
         } catch (SQLException e) {
             //Si ocurre un error lo indica en la consola
@@ -407,9 +420,9 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         panellImagenHuella.setBackground(new java.awt.Color(204, 204, 204));
         panellImagenHuella.setForeground(new java.awt.Color(204, 204, 204));
         panellImagenHuella.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        panellImagenHuella.add(lblImagenHuella, new org.netbeans.lib.awtextra.AbsoluteConstraints(8, 0, 610, 290));
+        panellImagenHuella.add(lblImagenHuella, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 610, 290));
 
-        getContentPane().add(panellImagenHuella, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, 620, 290));
+        getContentPane().add(panellImagenHuella, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 620, 290));
 
         panBtns.setBackground(new java.awt.Color(204, 204, 204));
         panBtns.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -438,7 +451,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         });
         panBtns.add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 150, 190, 40));
 
-        getContentPane().add(panBtns, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 330, 760, 240));
+        getContentPane().add(panBtns, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 340, 760, 240));
 
         txtArea.setColumns(20);
         txtArea.setRows(5);
@@ -475,7 +488,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         guardarHuella();
         Reclutador.clear();
         lblImagenHuella.setIcon(null);
-        start();
+        start(txtArea);
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
@@ -483,11 +496,11 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        Iniciar();
-        start();
-        EstadoHuellas();
+        //Iniciar(txtArea, lblImagenHuella);
+        start(txtArea);
+        EstadoHuellas(txtArea);
         btnGuardar.setEnabled(false);
-        btnIdentificar.setEnabled(true);
+        // btnIdentificar.setEnabled(true);
         btnVerificar.setEnabled(false);
         btnSalir.grabFocus();
 
@@ -495,7 +508,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
 
-        stop();
+        stop(txtArea);
 
     }//GEN-LAST:event_formWindowClosing
 
@@ -537,7 +550,10 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CapturahuellaDigital().setVisible(true);
+                JpfPrincipal principal = new JpfPrincipal();
+                principal.setVisible(true);
+
+                //new CapturahuellaDigital().setVisible(true);
             }
         });
     }

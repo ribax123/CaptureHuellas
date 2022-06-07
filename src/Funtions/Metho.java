@@ -17,16 +17,22 @@ import com.digitalpersona.onetouch.capture.event.DPFPSensorEvent;
 import javax.swing.SwingUtilities;
 import Formulario.CapturahuellaDigital;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.xml.datatype.DatatypeConstants;
 
 /**
  *
  * @author Fabian Andres
  */
-public class Metho{
+public class Metho {
 
     public static void main(String[] args) {
 
@@ -38,7 +44,7 @@ public class Metho{
         System.out.println(feActual);
         System.out.println(horaActual);
     }
-     private DPFPCapture Lector = DPFPGlobal.getCaptureFactory().createCapture();
+    private DPFPCapture Lector = DPFPGlobal.getCaptureFactory().createCapture();
     private String dia;
     private String mes;
     private String anio;
@@ -91,14 +97,10 @@ public class Metho{
 
         return horas + ":" + minutos + ":" + segundos;
     }
-    
-    
 
     public void NombreHuella() {
-       
-      
+
     }
-    
 
     public void MostrarNombre() {
 
@@ -122,4 +124,33 @@ public class Metho{
         return anio;
     }
 
+    public void diaSemana(JLabel diaa) {
+        String DIA[] = {"Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"};
+
+        Calendar calendario = Calendar.getInstance();
+
+        String fecha = DIA[calendario.get(Calendar.DAY_OF_WEEK) - 1];
+
+        diaa.setText(fecha);
+
+    }
+
+    public String HoraMilitar() {
+
+        String timeStamp = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
+        return timeStamp;
+    }
+
+    public void reloj(JLabel relojHora) {
+        Thread hilo = new Thread() {
+            public void run() {
+                while (true) {
+                    DateFormat hora = new SimpleDateFormat("HH:mm:ss");
+                    String horaDos = hora.format(new Date()).toString();
+                    relojHora.setText(horaDos);
+                }
+            }
+        };
+        hilo.start();
+    }
 }

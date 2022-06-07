@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
-public class conexionBD {
+public class ConexionBD {
 
     public String puerto = "3306";
     public String nomservidor = "localhost";
