@@ -6,44 +6,22 @@ package Funtions;
 
 import com.digitalpersona.onetouch.DPFPGlobal;
 import com.digitalpersona.onetouch.capture.DPFPCapture;
-import com.digitalpersona.onetouch.capture.event.DPFPDataAdapter;
-import com.digitalpersona.onetouch.capture.event.DPFPDataEvent;
-import com.digitalpersona.onetouch.capture.event.DPFPErrorAdapter;
-import com.digitalpersona.onetouch.capture.event.DPFPErrorEvent;
-import com.digitalpersona.onetouch.capture.event.DPFPReaderStatusAdapter;
-import com.digitalpersona.onetouch.capture.event.DPFPReaderStatusEvent;
-import com.digitalpersona.onetouch.capture.event.DPFPSensorAdapter;
-import com.digitalpersona.onetouch.capture.event.DPFPSensorEvent;
-import javax.swing.SwingUtilities;
-import Formulario.CapturahuellaDigital;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.xml.datatype.DatatypeConstants;
 
-/**
- *
- * @author Fabian Andres
- */
 public class Metho {
 
     public static void main(String[] args) {
 
         //Debugging
         Metho fecha = new Metho();
-
-        String feActual = fecha.fechaActual();
         String horaActual = fecha.MostrarHora();
-        System.out.println(feActual);
         System.out.println(horaActual);
     }
+
     private DPFPCapture Lector = DPFPGlobal.getCaptureFactory().createCapture();
     private String dia;
     private String mes;
@@ -52,15 +30,16 @@ public class Metho {
     public String minutos;
     public String segundos;
 
-    public String fechaActual() {
+    public void fechaActual(JLabel fecha) {
 
         Calendar c1 = Calendar.getInstance();
+        
         dia = Integer.toString(c1.get(Calendar.DATE));
         mes = Integer.toString(c1.get(Calendar.MONTH));
         anio = Integer.toString(c1.get(Calendar.YEAR));
 
         int mees = Integer.parseInt(getMes());
-        return getDia() + "/" + (mees + 1) + "/" + getAnio();
+        fecha.setText(getDia() + "/" + (mees + 1) + "/" + getAnio());
 
     }
 
@@ -141,13 +120,16 @@ public class Metho {
         return timeStamp;
     }
 
-    public void reloj(JLabel relojHora) {
+    public void reloj(JLabel relojHora, JLabel diaa, JLabel fecha) {
         Thread hilo = new Thread() {
             public void run() {
                 while (true) {
                     DateFormat hora = new SimpleDateFormat("HH:mm:ss");
                     String horaDos = hora.format(new Date()).toString();
                     relojHora.setText(horaDos);
+
+                    diaSemana(diaa);
+                    fechaActual(fecha);
                 }
             }
         };
