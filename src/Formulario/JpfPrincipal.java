@@ -404,7 +404,7 @@ public class JpfPrincipal extends javax.swing.JFrame {
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 300, 620));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Blue Step.png"))); // NOI18N
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 0, 780, 50));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 0, 780, 110));
 
         jPanel5.setBackground(new java.awt.Color(221, 245, 255));
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
