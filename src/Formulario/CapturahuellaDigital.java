@@ -22,24 +22,17 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import Funtions.ConexionBD;
 import com.digitalpersona.onetouch.verification.DPFPVerificationResult;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.System.Logger;
-import java.lang.System.Logger.Level;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import Funtions.Metho;
-import com.sun.source.tree.BreakTree;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Calendar;
-import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -61,7 +54,20 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
     ConexionBD con = new ConexionBD();
 
-    protected void Iniciar(JTextArea tex, JLabel img, JLabel label, JLabel hrc) {
+    protected void Iniciar(JTextArea tex,
+            JLabel img,
+            JLabel JLsetNombre,
+            JLabel hrc,
+            String nombre,
+            String hora,
+            String fecha,
+            String dia,
+            JLabel jnombre,
+            JLabel jhora,
+            JLabel jfecha,
+            JLabel guardado,
+            JLabel jdia
+    ) {
         Lector.addDataListener(new DPFPDataAdapter() {
 
             @Override
@@ -72,8 +78,9 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
                         try {
                             EnviarTexto("La Huella Digital ha sido Capturada", tex);
                             ProcesarCapturaId(e.getSample(), tex, img);
-                            identificarHuella(label);
+                            identificarHuella(JLsetNombre);
                             capHora(hrc);
+                            guardarRegistros(nombre, hora, fecha, dia, jnombre, jhora, jfecha, jdia, guardado, tex);
 
                         } catch (IOException ex) {
                             java.util.logging.Logger.getLogger(CapturahuellaDigital.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -145,7 +152,10 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         });
     }
 
-    protected void IniciarG(JTextArea tex, JLabel img) {
+    protected void IniciarG(
+            JTextArea tex,
+            JLabel img
+    ) {
         Lector.addDataListener(new DPFPDataAdapter() {
 
             @Override
@@ -155,6 +165,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
                         EnviarTexto("La Huella Digital ha sido Capturada", tex);
                         ProcesarCaptura(e.getSample(), tex, img);
+
                     }
                 }
                 );
@@ -220,6 +231,16 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
                 });
             }
         });
+    }
+    
+    
+    public void LctorNull (JTextArea tex){
+        Reclutador.clear();
+            stop(tex);
+            EstadoHuellas(tex);
+            setTemplate(null);
+            start(tex);
+        
     }
 
     public String capHora(JLabel hrc) {
@@ -343,7 +364,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
                 Image image = CrearImagenHuella(sample);
                 DibujarHuella(image, img);
 
-            } catch (DPFPImageQualityException e) {  
+            } catch (DPFPImageQualityException e) {
                 System.out.println("Error: " + e.getMessage());
 
             } finally {
@@ -364,8 +385,8 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
                         stop(tex);
                         EstadoHuellas(tex);
                         setTemplate(null);
-                        JOptionPane.showMessageDialog(CapturahuellaDigital.this, "La plantilla de la huella no pudo ser creada");
                         start(tex);
+                        JOptionPane.showMessageDialog(CapturahuellaDigital.this, "La plantilla de la huella no pudo ser creada");
                         break;
 
                 }
@@ -376,66 +397,123 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
     }
 
-    /*public void guardarHuella() {
-        //Obtiene los datos del template de la huella actual
+    public void guardarIndex(int index, JTabbedPane jtabb) {
 
-        ByteArrayInputStream datosHuella = new ByteArrayInputStream(template.serialize());
-        Integer tamañoHuella = template.serialize().length;
-        
-        
+        // OBTIENE EL VALOR NUMERICO DEL INDEX DEL JTabbedPane
+        index = jtabb.getSelectedIndex();
+
         //Pregunta el nombre de la persona a la cual corresponde dicha huella
-        String nombre = JOptionPane.showInputDialog("Nombre:");
         try {
             //Establece los valores para la sentencia SQL
             Connection c = con.conectar();
-            PreparedStatement guardarStmt = c.prepareStatement("INSERT INTO somhue values (?,?,?)");
+            PreparedStatement guardarStmt = c.prepareStatement("INSERT INTO indice values (?,?)");
 
             guardarStmt.setInt(1, 0);
-            guardarStmt.setString(2, nombre);
-            guardarStmt.setBinaryStream(3, datosHuella, tamañoHuella);
-            //Ejecuta la sentencia
-            guardarStmt.executeUpdate();
-            guardarStmt.close();
-            JOptionPane.showMessageDialog(null, "Huella Guardada Correctamente");
+            guardarStmt.setInt(2, index);
+            
 
-            con.desconectar();
-            btnGuardar.setEnabled(false);
-            btnVerificar.grabFocus();
+            guardarStmt.executeUpdate();
+
+            System.out.println("index guardado " + index);
+
         } catch (SQLException ex) {
             //Si ocurre un error lo indica en la consola
-            System.err.println("Error al guardar los datos de la huella.");
+            System.err.println("Error al guardar.");
             System.err.println("error " + ex);
         } finally {
             con.desconectar();
-            System.out.println(nombre);
-            System.out.println(datosHuella);
-            System.out.println(tamañoHuella);
+
         }
-    }*/
-    public void guardarHuellas(
-    
-            
-    String nombre,
-    String cargo, 
-    String telefono,
-    String correo,
-    JTextField jnombre,
-    JTextField jcargo,
-    JTextField jtelefono,
-    JTextField jcorreo      
+    }
+
+    public void guardarRegistros(
+            String nombre,
+            String hora,
+            String fecha,
+            String dia,
+            JLabel jnombre,
+            JLabel jhora,
+            JLabel jfecha,
+            JLabel jdia,
+            JLabel guardado,
+            JTextArea tex
     ) {
         //Obtiene los datos del template de la huella actual
         ByteArrayInputStream datosHuella = new ByteArrayInputStream(template.serialize());
         Integer tamañoHuella = template.serialize().length;
-        
+
+        //Pregunta el nombre de la persona a la cual corresponde dicha huella
+        nombre = jnombre.getText();
+        hora = jhora.getText();
+        fecha = jfecha.getText();
+        dia = jdia.getText();
+        boolean bandera = false;
+        System.out.print(hora);
+        try {
+            //Establece los valores para la sentencia SQL
+            Connection c = con.conectar();
+            PreparedStatement guardarStmt = c.prepareStatement("INSERT INTO  datos_resgistros values (?,?,?,?,?)");
+
+            guardarStmt.setInt(1, 0);
+            guardarStmt.setString(2, nombre);
+            guardarStmt.setString(3, hora);
+            guardarStmt.setString(4, fecha);
+            guardarStmt.setString(5, dia);
+
+            //Ejecuta la sentencia
+            guardarStmt.executeUpdate();
+            guardarStmt.close();
+            guardado.setText("¡Registro guardado!");
+
+            bandera = true;
+            con.desconectar();
+
+        } catch (SQLException ex) {
+            //Si ocurre un error lo indica en la consola
+            System.err.println("Error al guardar el registro.");
+            System.err.println("error " + ex);
+        } finally {
+            //setTemplate(null);
+            con.desconectar();
+
+            System.out.println(nombre);
+            System.out.println(datosHuella);
+            System.out.println(tamañoHuella);
+
+        }
+        if (bandera == true) {
+            Reclutador.clear();
+            stop(tex);
+            EstadoHuellas(tex);
+            setTemplate(null);
+            start(tex);
+
+        }
+
+    }
+
+    public void guardarHuellas(
+            String nombre,
+            String cargo,
+            String telefono,
+            String correo,
+            JTextField jnombre,
+            JTextField jcargo,
+            JTextField jtelefono,
+            JTextField jcorreo,
+            JTextArea tex
+    ) {
+        //Obtiene los datos del template de la huella actual
+        ByteArrayInputStream datosHuella = new ByteArrayInputStream(template.serialize());
+        Integer tamañoHuella = template.serialize().length;
+
         //Pregunta el nombre de la persona a la cual corresponde dicha huella
         nombre = jnombre.getText();
         cargo = jcargo.getText();
         telefono = jtelefono.getText();
         correo = jcorreo.getText();
-        
-        
-        
+        boolean bandera = false;
+        System.out.print(hora);
         try {
             //Establece los valores para la sentencia SQL
             Connection c = con.conectar();
@@ -452,18 +530,31 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
             guardarStmt.close();
             JOptionPane.showMessageDialog(null, "Huella Guardada Correctamente");
 
+            bandera = true;
             con.desconectar();
-            
+
         } catch (SQLException ex) {
             //Si ocurre un error lo indica en la consola
             System.err.println("Error al guardar los datos de la huella.");
             System.err.println("error " + ex);
         } finally {
+            //setTemplate(null);
             con.desconectar();
+
             System.out.println(nombre);
             System.out.println(datosHuella);
             System.out.println(tamañoHuella);
+
         }
+        if (bandera == true) {
+            Reclutador.clear();
+            stop(tex);
+            EstadoHuellas(tex);
+            setTemplate(null);
+            start(tex);
+
+        }
+
     }
 
     public void verificarHuella(String nom) {
@@ -506,7 +597,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         }
     }
 
-    public void identificarHuella(JLabel label) throws IOException {
+    public void identificarHuella(JLabel jLSetNombre) throws IOException {
 
         try {
             //Establece los valores para la sentencia SQL
@@ -538,7 +629,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
                 if (result.isVerified()) {
                     //crea la imagen de los datos guardado de las huellas guardadas en la base de               
                     //JOptionPane.showMessageDialog(null, "Las huella capturada es de " + nombre, "Verificacion de Huella ", JOptionPane.INFORMATION_MESSAGE);
-                    label.setText(nombre);
+                    jLSetNombre.setText(nombre);
 
                     return;
 

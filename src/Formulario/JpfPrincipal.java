@@ -2,11 +2,8 @@ package Formulario;
 
 import Funtions.ConexionBD;
 import Funtions.Metho;
-import com.digitalpersona.onetouch.DPFPGlobal;
-import com.digitalpersona.onetouch.DPFPTemplate;
-import com.digitalpersona.onetouch.processing.DPFPEnrollment;
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
+import java.awt.event.WindowAdapter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,32 +13,37 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class JpfPrincipal extends javax.swing.JFrame {
-    
+
     ConexionBD con = new ConexionBD();
     DefaultTableModel model = new DefaultTableModel();
     Metho metho = new Metho();
-    
+
     public String nombre = "";
     public String cargo = "";
     public String telefono = "";
     public String correo = "";
-  
-    
+    public String dia = "";
+    public String fecha = "";
+    public int indice;
+    private Thread time = null;
+
     public String hora = metho.MostrarHora();
-  CapturahuellaDigital inicio = new CapturahuellaDigital();
+    CapturahuellaDigital inicio = new CapturahuellaDigital();
+    Add_User agregar = new Add_User();
+
     public JpfPrincipal() {
         this.setUndecorated(true);
         initComponents();
+        jTabbedPane1.setSelectedIndex(2);
+        tabla();
+
+        System.out.println("ultimo index " + getIndexx());
+
         this.setLocationRelativeTo(null);
-
-      
-        //inicio.Iniciar(jTextArea1, jLImagenHuella, jLNombre, jLHora);
-        inicio.IniciarG(jTextAreaGuardar, jLImagenHuellaGuardar);
-        
         metho.reloj(jLHora, jLDia, jLFecha);
+        //inicio.start(jTextArea1)inicio.start(jTextAreaGuardar);;
 
-        //inicio.start(jTextArea1);
-        inicio.start(jTextAreaGuardar);
+        
 
     }
 
@@ -87,51 +89,34 @@ public class JpfPrincipal extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Error al mostrar información, ¡Contacte al administrador!");
         }
     }
-     /*public void guardarHuellas() {
-        //Obtiene los datos del template de la huella actual
-        ByteArrayInputStream datosHuella = new ByteArrayInputStream(template.serialize());
-        Integer tamañoHuella = template.serialize().length;
-        
-        //Pregunta el nombre de la persona a la cual corresponde dicha huella
-        nombre = jTxNombre.getText();
-        cargo = jTxCargo.getText();
-        telefono = jTxTelefono.getText();
-        correo = jTxCorreo.getText();
-        
-        
-        
+
+    public int getIndexx() {
+
+        int valorIndex = 5;
+
         try {
-            //Establece los valores para la sentencia SQL
-            Connection c = con.conectar();
-            PreparedStatement guardarStmt = c.prepareStatement("INSERT INTO somhue values (?,?,?,?,?,?)");
+            System.out.print("CONECCION EXITOSA!!");
+            Connection cn = con.conectar();
+            PreparedStatement pst = cn.prepareStatement(
+                    " SELECT indexxx FROM indice WHERE id = ( SELECT MAX(id) FROM indice)");
 
-            guardarStmt.setInt(1, 0);
-            guardarStmt.setString(2, nombre);
-            guardarStmt.setString(3, cargo);
-            guardarStmt.setString(4, telefono);
-            guardarStmt.setString(5, correo);
-            guardarStmt.setBinaryStream(6, datosHuella, tamañoHuella);
-            //Ejecuta la sentencia
-            guardarStmt.executeUpdate();
-            guardarStmt.close();
-            JOptionPane.showMessageDialog(null, "Huella Guardada Correctamente");
+            ResultSet rs = pst.executeQuery();
 
-            con.desconectar();
-            
-        } catch (SQLException ex) {
-            //Si ocurre un error lo indica en la consola
-            System.err.println("Error al guardar los datos de la huella.");
-            System.err.println("error " + ex);
-        } finally {
-            con.desconectar();
-            System.out.println(nombre);
-            System.out.println(datosHuella);
-            System.out.println(tamañoHuella);
+            while (rs.next()) {
+                valorIndex = rs.getInt("indexxx");
+
+            }
+
+            cn.close();
+
+        } catch (SQLException e) {
+            System.err.print("Error Sql" + e);
+
         }
-    }*/
+        return valorIndex;
 
-     
-    
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -146,9 +131,6 @@ public class JpfPrincipal extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -192,14 +174,26 @@ public class JpfPrincipal extends javax.swing.JFrame {
         jLabel23 = new javax.swing.JLabel();
         jLFecha = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
+        jLguardado = new javax.swing.JLabel();
         jLimagen = new javax.swing.JLabel();
         jPanel10 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
         jLHora = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
         jLabel16 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel15.setBackground(new java.awt.Color(255, 255, 255));
@@ -307,33 +301,6 @@ public class JpfPrincipal extends javax.swing.JFrame {
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/backBlue Step.png"))); // NOI18N
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jPanel2.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                jPanel2MouseMoved(evt);
-            }
-        });
-        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jPanel2MouseClicked(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                jPanel2MouseExited(evt);
-            }
-        });
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/add-button (3).png"))); // NOI18N
-        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 0, 80, 70));
-
-        jLabel8.setFont(new java.awt.Font("Corbel", 0, 24)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(102, 102, 102));
-        jLabel8.setText("Add user");
-        jPanel2.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 90, 40));
-
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 260, 300, 80));
-
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jPanel3.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -385,7 +352,7 @@ public class JpfPrincipal extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 340, 300, 80));
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 330, 300, 80));
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -432,12 +399,12 @@ public class JpfPrincipal extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 420, 300, 80));
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 250, 300, 80));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 300, 620));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Blue Step.png"))); // NOI18N
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 0, 780, 90));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 0, 780, 50));
 
         jPanel5.setBackground(new java.awt.Color(221, 245, 255));
         jPanel5.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -578,9 +545,9 @@ public class JpfPrincipal extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jPanel9.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 760, 140));
+        jPanel9.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 660, 140));
 
-        jPanel7.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 760, 140));
+        jPanel7.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 660, 140));
 
         jLNombre.setFont(new java.awt.Font("Corbel", 1, 20)); // NOI18N
         jLNombre.setForeground(new java.awt.Color(102, 102, 102));
@@ -612,6 +579,10 @@ public class JpfPrincipal extends javax.swing.JFrame {
         jLabel19.setText("Fecha :");
         jPanel7.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 260, -1, -1));
 
+        jLguardado.setFont(new java.awt.Font("Corbel", 1, 18)); // NOI18N
+        jLguardado.setForeground(new java.awt.Color(51, 204, 0));
+        jPanel7.add(jLguardado, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 310, 170, -1));
+
         jLimagen.setBackground(new java.awt.Color(255, 255, 255));
         jLimagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/pngegg.png"))); // NOI18N
         jLimagen.setText("jLabel13");
@@ -635,9 +606,37 @@ public class JpfPrincipal extends javax.swing.JFrame {
         jTextField1.setText("jTextField1");
         jPanel7.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 120, 180, -1));
 
-        jTabbedPane1.addTab("tab3", jPanel7);
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jPanel2.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                jPanel2MouseMoved(evt);
+            }
+        });
+        jPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPanel2MouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jPanel2MouseExited(evt);
+            }
+        });
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 50, 780, 570));
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/add-button (3).png"))); // NOI18N
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel5MouseClicked(evt);
+            }
+        });
+        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 70, 80));
+
+        jPanel7.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 370, 70, 80));
+
+        jTabbedPane1.addTab("tab3", jPanel7);
+        jTabbedPane1.addTab("tab4", jTabbedPane2);
+
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 70, 780, 550));
 
         jLabel16.setBackground(new java.awt.Color(255, 255, 255));
         jLabel16.setFont(new java.awt.Font("Corbel", 0, 24)); // NOI18N
@@ -649,7 +648,15 @@ public class JpfPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jPanel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseClicked
-        jTabbedPane1.setSelectedIndex(0);
+
+         
+        new Add_User().setVisible(true);
+        dispose();
+        
+
+        //jTabbedPane1.setSelectedIndex(0);
+        //inicio.IniciarG(jTextAreaGuardar, jLImagenHuellaGuardar);
+// inicio.HiloGuardar(jTabbedPane1, nombre, cargo, telefono, correo, jTxNombre, jTxCargo, jTxTelefono, jTxCorreo, jTextAreaGuardar);
     }//GEN-LAST:event_jPanel2MouseClicked
 
     private void jPanel2MouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseMoved
@@ -669,7 +676,18 @@ public class JpfPrincipal extends javax.swing.JFrame {
                       }//GEN-LAST:event_jPanel3MouseExited
 
     private void jPanel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel4MouseClicked
-        jTabbedPane1.setSelectedIndex(2);
+
+        try {
+            jTabbedPane1.setSelectedIndex(2);
+
+            inicio.start(jTextAreaGuardar);
+            inicio.Iniciar(jTextArea1, jLImagenHuella, jLNombre, jLHora, nombre, hora, fecha, dia, jLNombre, jLHora, jLFecha, jLguardado, jLDia);
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+        //this.dispose();
 
     }//GEN-LAST:event_jPanel4MouseClicked
 
@@ -734,25 +752,48 @@ public class JpfPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jPMinimizarMouseExited
 
     private void jPanel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel3MouseClicked
-       jTabbedPane1.setSelectedIndex(1);
-       tabla();
+        jTabbedPane1.setSelectedIndex(1);
+        tabla();
     }//GEN-LAST:event_jPanel3MouseClicked
 
     private void jPanel15MouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel15MouseMoved
-      jPanel15.setBackground(new Color(23, 156, 211));
+        jPanel15.setBackground(new Color(23, 156, 211));
     }//GEN-LAST:event_jPanel15MouseMoved
 
     private void jPanel15MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel15MouseClicked
-        
-        inicio.guardarHuellas(nombre, cargo, telefono, correo, jTxNombre,jTxCargo , jTxTelefono, jTxCorreo);
-        jLImagenHuellaGuardar.setIcon(null);
-        inicio.IniciarG(jTextAreaGuardar, jLImagenHuellaGuardar );
-        new CapturahuellaDigital().start(jTextAreaGuardar);
+        jTabbedPane1.setSelectedIndex(0);
+        inicio.guardarHuellas(nombre, cargo, telefono, correo, jTxNombre, jTxCargo, jTxTelefono, jTxCorreo, jTextAreaGuardar);
+        try {
+            JpfPrincipal principal = new JpfPrincipal();
+            principal.setVisible(true);
+
+            dispose();
+        } catch (Exception e) {
+            System.err.println("error" + e);
+
+        }
+
+
     }//GEN-LAST:event_jPanel15MouseClicked
 
     private void jPanel15MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel15MouseExited
-       jPanel15.setBackground(new Color(255, 255, 255));
+        jPanel15.setBackground(new Color(255, 255, 255));
     }//GEN-LAST:event_jPanel15MouseExited
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+
+    }//GEN-LAST:event_formWindowClosing
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+
+    }//GEN-LAST:event_formWindowClosed
+
+    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
+          
+        new Add_User().setVisible(true);
+        dispose();
+        
+    }//GEN-LAST:event_jLabel5MouseClicked
 
     /**
      * @param args the command line arguments
@@ -818,8 +859,8 @@ public class JpfPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLguardado;
     private javax.swing.JLabel jLimagen;
     private javax.swing.JPanel jPCerrar;
     private javax.swing.JPanel jPMinimizar;
@@ -830,7 +871,7 @@ public class JpfPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
-    private javax.swing.JPanel jPanel2;
+    public javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -842,6 +883,7 @@ public class JpfPrincipal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollRegistros;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTable jTableRegistros;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextAreaGuardar;

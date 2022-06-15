@@ -6,6 +6,8 @@ package Funtions;
 
 import com.digitalpersona.onetouch.DPFPGlobal;
 import com.digitalpersona.onetouch.capture.DPFPCapture;
+import java.awt.Component;
+import java.awt.Container;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -127,7 +129,6 @@ public class Metho {
                     DateFormat hora = new SimpleDateFormat("HH:mm:ss");
                     String horaDos = hora.format(new Date()).toString();
                     relojHora.setText(horaDos);
-
                     diaSemana(diaa);
                     fechaActual(fecha);
                 }
@@ -136,3 +137,4 @@ public class Metho {
         hilo.start();
     }
 }
+   
