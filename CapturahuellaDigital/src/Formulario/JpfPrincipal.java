@@ -57,8 +57,10 @@ public class JpfPrincipal extends javax.swing.JFrame {
         metho.reloj(jLHora, jLDia, jLFecha);
         //inicio.start(jTextArea1)inicio.start(jTextAreaGuardar);;
 
-    }
-
+    }       
+    
+    
+    // TABLA 
     public void tabla() {
         model.setRowCount(0);
         model.setColumnCount(0);
@@ -66,7 +68,7 @@ public class JpfPrincipal extends javax.swing.JFrame {
             System.out.print("CONECCION EXITOSA!!");
             Connection cn = con.conectar();
             PreparedStatement pst = cn.prepareStatement(
-                    " select * from datos_resgistros");
+                    "select * from datos_resgistros order by id desc");
 
             ResultSet rs = pst.executeQuery();
 

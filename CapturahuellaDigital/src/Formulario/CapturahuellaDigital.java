@@ -54,14 +54,15 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
     ConexionBD con = new ConexionBD();
 
+    
+   // inicia y guarda los datos carturados por el scaner
     protected void Iniciar(
             JTextArea tex,
             JLabel img,
             JLabel JLsetNombre,
             JLabel hrc,
             String nombre,
-            String hora,
-            
+            String hora,           
             String fecha,
             String dia,
             JLabel jnombre,
@@ -155,6 +156,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         });
     }
 
+    //inicia el proceso para guardar la huella
     protected void IniciarG(
             JTextArea tex,
             JLabel img
@@ -353,6 +355,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
     }
 
+    // captura la huella para crar la plantilla y luego poder aceder a ella
     public void ProcesarCaptura(DPFPSample sample, JTextArea tex, JLabel img) {
 
         featuresinscripcion = extraerCaracteristicas(sample, DPFPDataPurpose.DATA_PURPOSE_ENROLLMENT);
@@ -428,6 +431,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         }
     }
 
+    // guarda los registros de la huella
     public void guardarRegistros(
             String nombre,
             String hora,
@@ -474,15 +478,16 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
         } catch (SQLException ex) {
             //Si ocurre un error lo indica en la consola
-            System.err.println("Error al guardar el registro.");
+            
             System.err.println("error " + ex);
-        } finally {
+        } finally {System.err.println("Error al guardar el registro.");
             //setTemplate(null);
             con.desconectar();
 
             System.out.println(nombre);
             System.out.println(datosHuella);
             System.out.println(tamañoHuella);
+            System.err.println("funcion ok");
 
         }
         if (bandera == true) {
@@ -495,7 +500,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         }
 
     }
-
+    // guarda los datos del usuario 
     public void guardarHuellas(
             String nombre,
             String cargo,
@@ -601,6 +606,8 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
         }
     }
 
+    
+    // identifica las huellas del usuario y las compara con las guardadas en la base de datos
     public void identificarHuella(JLabel jLSetNombre) throws IOException {
 
         try {

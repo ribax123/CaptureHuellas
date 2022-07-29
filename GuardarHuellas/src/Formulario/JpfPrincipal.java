@@ -54,7 +54,7 @@ public class JpfPrincipal extends javax.swing.JFrame {
             System.out.print("CONECCION EXITOSA!!");
             Connection cn = con.conectar();
             PreparedStatement pst = cn.prepareStatement(
-                    " select * from datos_resgistros");
+                    " select * from datos_resgistros order by fecha desc");
 
             ResultSet rs = pst.executeQuery();
 
