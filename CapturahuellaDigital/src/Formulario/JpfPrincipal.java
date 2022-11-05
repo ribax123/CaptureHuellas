@@ -29,6 +29,8 @@ public class JpfPrincipal extends javax.swing.JFrame {
     public String fecha = "";
     public int indice;
     public String capHora="";
+    public String setudefined="";
+    
     
     private Thread time = null;
 
@@ -44,7 +46,7 @@ public class JpfPrincipal extends javax.swing.JFrame {
         try {
 
             inicio.start(jTextAreaGuardar);
-            inicio.Iniciar(jTextArea1, jLImagenHuella, jLNombre, jLHora, nombre, hora,  fecha, dia, jLNombre, jLHora, jLFecha, jLguardado, jLDia, jLcapHora);
+            inicio.Iniciar(jTextArea1, jLImagenHuella, jLNombre, jLHora, nombre, hora,  fecha, dia, jLNombre, jLHora, jLFecha, jLguardado, jLDia, jLcapHora, User_undefined);
 
         } catch (Exception e) {
             System.out.println(e);
@@ -187,6 +189,7 @@ public class JpfPrincipal extends javax.swing.JFrame {
         jLabel20 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
         jLFecha = new javax.swing.JLabel();
+        User_undefined = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
         jLguardado = new javax.swing.JLabel();
@@ -591,6 +594,10 @@ public class JpfPrincipal extends javax.swing.JFrame {
         jLFecha.setText("--/--/--");
         jPanel7.add(jLFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 260, -1, -1));
 
+        User_undefined.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        User_undefined.setForeground(new java.awt.Color(255, 0, 51));
+        jPanel7.add(User_undefined, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 330, 230, 30));
+
         jLabel19.setFont(new java.awt.Font("Corbel", 1, 18)); // NOI18N
         jLabel19.setForeground(new java.awt.Color(102, 102, 102));
         jLabel19.setText("Fecha :");
@@ -716,7 +723,7 @@ public class JpfPrincipal extends javax.swing.JFrame {
             jTabbedPane1.setSelectedIndex(2);
 
             inicio.start(jTextAreaGuardar);
-            inicio.Iniciar(jTextArea1, jLImagenHuella, jLNombre, jLHora, nombre, hora, fecha, dia, jLNombre, jLHora, jLFecha, jLguardado, jLDia, jLcapHora);
+            inicio.Iniciar(jTextArea1, jLImagenHuella, jLNombre, jLHora, nombre, hora, fecha, dia, jLNombre, jLHora, jLFecha, jLguardado, jLDia, jLcapHora, User_undefined);
 
         } catch (Exception e) {
             System.out.println(e);
@@ -874,6 +881,7 @@ public class JpfPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel User_undefined;
     private javax.swing.JLabel jLDia;
     private javax.swing.JLabel jLFecha;
     private javax.swing.JLabel jLHora;

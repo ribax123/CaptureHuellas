@@ -70,7 +70,9 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
             JLabel jfecha,
             JLabel guardado,
             JLabel jdia,
-            JLabel jcapHora
+            JLabel jcapHora,
+            JLabel jLUndefined
+            
     ) {
         Lector.addDataListener(new DPFPDataAdapter() {
             
@@ -82,9 +84,9 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
                         try {
                             EnviarTexto("La Huella Digital ha sido Capturada", tex);
                             ProcesarCapturaId(e.getSample(), tex, img);
-                            identificarHuella(JLsetNombre);
+                            identificarHuella(JLsetNombre, jLUndefined);
                             capHora(hrc);
-                            guardarRegistros(nombre, hora, fecha, dia, jnombre, jhora, jfecha, jdia, guardado, jcapHora, tex);
+                            guardarRegistros(nombre, hora, fecha, dia, jnombre, jhora, jfecha, jdia, guardado, jcapHora, tex, jLUndefined);
                             
                         } catch (IOException ex) {
                             java.util.logging.Logger.getLogger(CapturahuellaDigital.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -443,7 +445,8 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
             JLabel jdia,
             JLabel guardado,
             JLabel JcapHora,
-            JTextArea tex
+            JTextArea tex,
+            JLabel undefined
     ) {
         //Obtiene los datos del template de la huella actual
         ByteArrayInputStream datosHuella = new ByteArrayInputStream(template.serialize());
@@ -472,6 +475,8 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
             guardarStmt.executeUpdate();
             guardarStmt.close();
             guardado.setText("¡Registro guardado!");
+            undefined.setText("");
+            
 
             bandera = true;
             con.desconectar();
@@ -608,7 +613,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
 
     
     // identifica las huellas del usuario y las compara con las guardadas en la base de datos
-    public void identificarHuella(JLabel jLSetNombre) throws IOException {
+    public void identificarHuella(JLabel jLSetNombre, JLabel jLundefined) throws IOException {
 
         try {
             //Establece los valores para la sentencia SQL
@@ -647,7 +652,7 @@ public class CapturahuellaDigital extends javax.swing.JFrame {
                 }
             }
             //Si no encuentra alguna huella correspondiente al nombre lo indica con un
-            JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella", "Verificacion de Huella", JOptionPane.ERROR_MESSAGE);
+           jLundefined.setText("No existe ningún registro que coincida con la huella, Verificacion de Huella\"");
             setTemplate(null);
         } catch (SQLException e) {
             //Si ocurre un error lo indica en la consola
